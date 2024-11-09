@@ -65,13 +65,41 @@ public class BankServiceImpl implements BankService{
     }
 
     @Override
-    public boolean deposit(float amount, int clientId) {
-        return false;
+    public int deposit(float amount, int clientId) {
+
+        // Error code 1: amount of money is invalid
+        if (amount <= 0) return 1;
+
+        Client client = findClientById(clientId);
+        float balance = client.getBalance();
+
+        balance += amount;
+        client.setBalance(balance);
+
+        save(client);
+
+        // Code 0: successful deposit
+        return 0;
     }
 
     @Override
-    public boolean withdraw(float amount, int clientId) {
-        return false;
+    public int withdraw(float amount, int clientId) {
+
+        // Error code 1: amount of money is invalid
+        if (amount <= 0) return 1;
+
+        // Error code 2: amount to deposit is bigger than balance
+        Client client = findClientById(clientId);
+        float balance = client.getBalance();
+
+        if (amount > balance) return 2;
+
+        balance -= amount;
+        client.setBalance(balance);
+
+        save(client);
+        
+        return 0;
     }
 
     @Override

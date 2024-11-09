@@ -17,7 +17,7 @@ public interface BankService {
     public void deleteClientById(int id);
     public void deleteTransactionById(int id);
     public float getBalance(int clientId);
-    public boolean deposit(float amount, int clientId);
-    public boolean withdraw(float amount, int clientId);
+    public int deposit(float amount, int clientId);
+    public int withdraw(float amount, int clientId);
     public boolean transferMoney(float amount, int payerId, int receiverId);
 }
