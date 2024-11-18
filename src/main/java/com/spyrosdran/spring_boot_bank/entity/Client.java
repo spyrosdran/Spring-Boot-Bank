@@ -2,6 +2,8 @@ package com.spyrosdran.spring_boot_bank.entity;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "client")
 public class Client {
@@ -25,6 +27,14 @@ public class Client {
 
     @Column(name = "password")
     private String password;
+
+    @OneToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.LAZY)
+    @JoinColumn(name = "payer_id", referencedColumnName = "id")
+    private List<Transaction> paidTransactions;
+
+    @OneToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.LAZY)
+    @JoinColumn(name = "receiver_id", referencedColumnName = "id")
+    private List<Transaction> receivedTransactions;
 
     public Client() { }
 
@@ -68,6 +78,22 @@ public class Client {
 
     public void setBalance(float balance) {
         this.balance = balance;
+    }
+
+    public List<Transaction> getPaidTransactions() {
+        return paidTransactions;
+    }
+
+    public void setPaidTransactions(List<Transaction> paidTransactions) {
+        this.paidTransactions = paidTransactions;
+    }
+
+    public List<Transaction> getReceivedTransactions() {
+        return receivedTransactions;
+    }
+
+    public void setReceivedTransactions(List<Transaction> receivedTransactions) {
+        this.receivedTransactions = receivedTransactions;
     }
 
     @Override

@@ -7,6 +7,9 @@ import com.spyrosdran.spring_boot_bank.entity.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Time;
+import java.sql.Timestamp;
+
 @Service
 public class BankServiceImpl implements BankService{
 
@@ -76,7 +79,10 @@ public class BankServiceImpl implements BankService{
         balance += amount;
         client.setBalance(balance);
 
-        save(client);
+        Transaction transaction = new Transaction(client, null, amount, "deposit");
+
+        save(transaction);
+        update(client);
 
         // Code 0: successful deposit
         return 0;
@@ -97,13 +103,44 @@ public class BankServiceImpl implements BankService{
         balance -= amount;
         client.setBalance(balance);
 
-        save(client);
-        
+        Transaction transaction = new Transaction(client, null, amount, "withdraw");
+
+        save(transaction);
+        update(client);
+
         return 0;
     }
 
     @Override
-    public boolean transferMoney(float amount, int payerId, int receiverId) {
-        return false;
+    public int transferMoney(float amount, int payerId, int receiverId) {
+
+        // Error code 1: amount of money is invalid
+        if (amount <= 0) return 1;
+
+        // Error code 2: amount to transfer is bigger than payer's balance
+        Client payer = findClientById(payerId);
+        float balance = payer.getBalance();
+
+        if (amount > balance) return 2;
+
+        // Complete the transaction
+        Client receiver = findClientById(receiverId);
+
+        float payerBalance = payer.getBalance();
+        float receiverBalance = receiver.getBalance();
+
+        payerBalance -= amount;
+        receiverBalance += amount;
+
+        payer.setBalance(payerBalance);
+        receiver.setBalance(receiverBalance);
+
+        Transaction transaction = new Transaction(payer, receiver, amount, "transfer");
+
+        save(transaction);
+        update(payer);
+        update(receiver);
+
+        return 0;
     }
 }

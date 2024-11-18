@@ -19,5 +19,5 @@ public interface BankService {
     public float getBalance(int clientId);
     public int deposit(float amount, int clientId);
     public int withdraw(float amount, int clientId);
-    public boolean transferMoney(float amount, int payerId, int receiverId);
+    public int transferMoney(float amount, int payerId, int receiverId);
 }
